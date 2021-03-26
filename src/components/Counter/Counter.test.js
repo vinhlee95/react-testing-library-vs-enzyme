@@ -3,7 +3,7 @@ import {screen} from '@testing-library/dom'
 import {render} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import Counter from '../components/Counter'
+import Counter from './Counter'
 
 test('counter increments and decrements when the buttons are clicked', () => {
     render(<Counter />)

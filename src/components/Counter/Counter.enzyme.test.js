@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {shallow} from 'enzyme'
-import Counter from '../components/Counter'
+import Counter from './Counter'
 
 describe('App', () => {
     it('counter increments and decrements when the buttons are clicked', () => {
