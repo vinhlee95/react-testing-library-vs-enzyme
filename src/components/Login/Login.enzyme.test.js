@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {build, fake} from '@jackfranklin/test-data-bot'
-import {shallow, mount} from 'enzyme'
+import {shallow} from 'enzyme'
 
 import Login from './Login'
 
@@ -12,10 +12,15 @@ const buildLoginForm = build({
 })
 
 /**
- * 1️⃣ Using Shallow rendering
- * Can't make this test pass in anyway 🤨🤨🤨
- * Shallow rendering seems to have problem with click simulation on submit-typed buttons
- * https://github.com/enzymejs/enzyme/issues/308
+ * 🥴🥴🥴 Gotchas
+ * In order to make this test to pass, we need to:
+ * 1️⃣ Explicitly assign onClick prop for the submit button. Because enzyme target the component's prop
+ * based on the event name ('click' in this case)
+ * https://enzymejs.github.io/enzyme/docs/api/ShallowWrapper/simulate.html#common-gotchas
+ * 2️⃣ Mock the full onClick event to match with what the component is currently doing
+ *
+ * ⛔️ This mean if we change the implementation details of the component. For example storing input values
+ * in the component's state, this test will fail miserably
  *
  */
 describe('Login Form', () => {
@@ -23,7 +28,6 @@ describe('Login Form', () => {
         const handleSubmitFn = jest.fn()
         const container = shallow(<Login onSubmit={handleSubmitFn} />)
 
-        const form = container.find('form')
         const loginField = container.find('#username-field')
         const passwordField = container.find('#password-field')
         const button = container.find('.submit-button')
@@ -32,34 +36,28 @@ describe('Login Form', () => {
         loginField.simulate('change', {target: {name: 'username', value: username}})
         passwordField.simulate('change', {target: {name: 'password', value: password}})
 
+        // Enzyme target the component's prop based on the event inside simulate()
+        // So we need to actually have a explicit onClick event handler for the button
+        // e.g. <button onClick={handleSubmit} />
+
+        // Simulate the event here to match with current implementation details of the component
+        // But the fact is that users do not care about that implementation details 🤦🏻‍
         const event = {
             preventDefault: () => {},
             target: {
-               elements: {
-                   username, password
-               }
+                elements: {
+                    username: {
+                        value: username
+                    },
+                    password: {
+                        value: password
+                    }
+                }
             }
         }
-        form.simulate('submit', event)
+        button.simulate('click', event)
 
         expect(handleSubmitFn).toHaveBeenCalledTimes(1)
+        expect(handleSubmitFn).toHaveBeenCalledWith({username, password})
     })
 })
-
-/**
- * 2️⃣ Using "mount" for full DOM rendering
- * ⛔️ Can't make it pass either
- *
- */
-describe('Login Form', () => {
-    it('submitting the form calls onSubmit with username and password', () => {
-        const handleSubmitFn = jest.fn()
-        const container = mount(<Login onSubmit={handleSubmitFn} />)
-
-        const button = container.find('button');
-        button.simulate('click')
-
-        expect(handleSubmitFn).toHaveBeenCalledTimes(1)
-    })
-})
-
