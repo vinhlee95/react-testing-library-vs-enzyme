@@ -21,7 +21,7 @@ function Login({onSubmit}) {
                 <input id="password-field" name="password" type="password" />
             </div>
             <div>
-                <button type="submit">Submit</button>
+                <button className='submit-button' type="submit">Submit</button>
             </div>
         </form>
     )
