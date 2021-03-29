@@ -25,20 +25,21 @@ test('logging in displays the user\'s username', async () => {
 })
 
 describe('logging in without username or password should fail', () => {
-    render(<Login />)
     const formData = buildLoginForm()
 
     it('should fail without username', async () => {
+        render(<Login />)
         userEvent.type(screen.getByLabelText(/password/i), formData.password)
         userEvent.click(screen.getByRole('button', {name: /submit/i}))
         await waitForElementToBeRemoved(screen.getByLabelText(/loading/i))
-        expect(screen.getByRole('alert')).toBeInTheDocument()
+        expect(screen.getByRole('alert')).toHaveTextContent('username is required')
     })
 
     it('should fail without password', async () => {
+        render(<Login />)
         userEvent.type(screen.getByLabelText(/username/i), formData.username)
         userEvent.click(screen.getByRole('button', {name: /submit/i}))
         await waitForElementToBeRemoved(screen.getByLabelText(/loading/i))
-        expect(screen.getByRole('alert')).toBeInTheDocument()
+        expect(screen.getByRole('alert')).toHaveTextContent('password is required')
     })
 })

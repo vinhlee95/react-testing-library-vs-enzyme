@@ -11,12 +11,15 @@ export const handlers = [
     rest.post(
         'https://auth-provider.example.com/api/login',
         async (req, res, ctx) => {
-            if(!req.body.username || !req.body.password) {
+            const requiredFields = ['username', 'password']
+            const missingDataField = requiredFields.find(field => !req.body[field])
+            if(missingDataField) {
                 return res(
                     ctx.status(400),
-                    ctx.json({message: 'Both username and password are required.'})
+                    ctx.json({message: `${missingDataField} is required`})
                 )
             }
+
 
             return res(
                 ctx.json({username: req.body.username})
