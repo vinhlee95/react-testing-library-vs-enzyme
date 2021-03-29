@@ -12,16 +12,17 @@ export const handlers = [
 		'https://auth-provider.example.com/api/login',
 		async (req, res, ctx) => {
 			const requiredFields = ['username', 'password']
+
 			const missingDataField = requiredFields.find(field => !req.body[field])
 			if (missingDataField) {
 				return res(
 					ctx.status(400),
+
 					ctx.json({message: `${missingDataField} is required`}),
 				)
 			}
 
-			return res(ctx.json
-			({username: req.body.username}))
+			return res(ctx.json({username: req.body.username}))
 		},
 	),
 ]
