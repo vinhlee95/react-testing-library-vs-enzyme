@@ -2,6 +2,8 @@ import * as React from 'react'
 import {render, screen, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {build, fake} from '@jackfranklin/test-data-bot'
+import {rest} from 'msw'
+import {server} from '../../setupTests'
 
 import Login from './LoginSubmission'
 
@@ -12,7 +14,7 @@ const buildLoginForm = build({
 	},
 })
 
-test("logging in displays the user's username", async () => {
+test("Logging in displays the user's username", async () => {
 	render(<Login />)
 	const {username, password} = buildLoginForm()
 
@@ -30,7 +32,7 @@ test("logging in displays the user's username", async () => {
  * https://jestjs.io/docs/snapshot-testing#inline-snapshots
  *
  */
-describe('logging in without username or password should fail', () => {
+describe('Logging in without username or password should fail', () => {
 	const formData = buildLoginForm()
 
 	it('should fail without username', async () => {
@@ -62,4 +64,39 @@ describe('logging in without username or password should fail', () => {
 		</div>
 	`)
 	})
+})
+
+test('Login form should render proper error message if the server fails', async () => {
+	// One-off server handler to test a specific scenario
+	// In this case, it is when the server fails with internal server error
+	// This bring 2 benefits for our tests:
+	// 💰 Preserve test isolation
+	// 💰 server.resetHandlers() will be called between tests (afterEach hook)
+	server.use(
+		rest.post(
+			'https://auth-provider.example.com/api/login',
+			async (req, res, ctx) => {
+				return res(
+					ctx.status(500),
+					ctx.json({message: 'I just want to fail in this test'}),
+				)
+			},
+		),
+	)
+
+	render(<Login />)
+	const {username, password} = buildLoginForm()
+	userEvent.type(screen.getByLabelText(/username/i), username)
+	userEvent.type(screen.getByLabelText(/password/i), password)
+	userEvent.click(screen.getByRole('button', {name: /submit/i}))
+	await waitForElementToBeRemoved(screen.getByLabelText(/loading/i))
+
+	expect(screen.getByRole('alert')).toMatchInlineSnapshot(`
+		<div
+		  role="alert"
+		  style="color: red;"
+		>
+		  I just want to fail in this test
+		</div>
+	`)
 })
