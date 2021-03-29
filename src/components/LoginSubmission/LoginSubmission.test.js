@@ -23,3 +23,22 @@ test('logging in displays the user\'s username', async () => {
     await waitForElementToBeRemoved(screen.getByLabelText(/loading/i))
     expect(screen.getByText(username)).toBeInTheDocument()
 })
+
+describe('logging in without username or password should fail', () => {
+    render(<Login />)
+    const formData = buildLoginForm()
+
+    it('should fail without username', async () => {
+        userEvent.type(screen.getByLabelText(/password/i), formData.password)
+        userEvent.click(screen.getByRole('button', {name: /submit/i}))
+        await waitForElementToBeRemoved(screen.getByLabelText(/loading/i))
+        expect(screen.getByRole('alert')).toBeInTheDocument()
+    })
+
+    it('should fail without password', async () => {
+        userEvent.type(screen.getByLabelText(/username/i), formData.username)
+        userEvent.click(screen.getByRole('button', {name: /submit/i}))
+        await waitForElementToBeRemoved(screen.getByLabelText(/loading/i))
+        expect(screen.getByRole('alert')).toBeInTheDocument()
+    })
+})

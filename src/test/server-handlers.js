@@ -11,6 +11,13 @@ export const handlers = [
     rest.post(
         'https://auth-provider.example.com/api/login',
         async (req, res, ctx) => {
+            if(!req.body.username || !req.body.password) {
+                return res(
+                    ctx.status(400),
+                    ctx.json({message: 'Both username and password are required.'})
+                )
+            }
+
             return res(
                 ctx.json({username: req.body.username})
             )
