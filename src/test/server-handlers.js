@@ -1,5 +1,5 @@
 import {rest} from 'msw'
-import {setupServer} from "msw/node"
+import {setupServer} from 'msw/node'
 
 /**
  * Mock server handlers
@@ -8,22 +8,20 @@ import {setupServer} from "msw/node"
  *
  */
 export const handlers = [
-    rest.post(
-        'https://auth-provider.example.com/api/login',
-        async (req, res, ctx) => {
-            const requiredFields = ['username', 'password']
-            const missingDataField = requiredFields.find(field => !req.body[field])
-            if(missingDataField) {
-                return res(
-                    ctx.status(400),
-                    ctx.json({message: `${missingDataField} is required`})
-                )
-            }
+	rest.post(
+		'https://auth-provider.example.com/api/login',
+		async (req, res, ctx) => {
+			const requiredFields = ['username', 'password']
+			const missingDataField = requiredFields.find(field => !req.body[field])
+			if (missingDataField) {
+				return res(
+					ctx.status(400),
+					ctx.json({message: `${missingDataField} is required`}),
+				)
+			}
 
-
-            return res(
-                ctx.json({username: req.body.username})
-            )
-        },
-    )
+			return res(ctx.json
+			({username: req.body.username}))
+		},
+	),
 ]
