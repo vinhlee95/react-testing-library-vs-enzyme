@@ -72,13 +72,14 @@ test('Login form should render proper error message if the server fails', async 
 	// This bring 2 benefits for our tests:
 	// 💰 Preserve test isolation
 	// 💰 server.resetHandlers() will be called between tests (afterEach hook)
+	const errorMessage = 'I just want to fail in this test'
 	server.use(
 		rest.post(
 			'https://auth-provider.example.com/api/login',
 			async (req, res, ctx) => {
 				return res(
 					ctx.status(500),
-					ctx.json({message: 'I just want to fail in this test'}),
+					ctx.json({message: errorMessage}),
 				)
 			},
 		),
@@ -91,12 +92,5 @@ test('Login form should render proper error message if the server fails', async 
 	userEvent.click(screen.getByRole('button', {name: /submit/i}))
 	await waitForElementToBeRemoved(screen.getByLabelText(/loading/i))
 
-	expect(screen.getByRole('alert')).toMatchInlineSnapshot(`
-		<div
-		  role="alert"
-		  style="color: red;"
-		>
-		  I just want to fail in this test
-		</div>
-	`)
+	expect(screen.getByRole('alert')).toHaveTextContent(errorMessage)
 })
