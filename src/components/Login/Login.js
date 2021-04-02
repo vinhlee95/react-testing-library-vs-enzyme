@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 function Login({onSubmit}) {
-	function handleSubmit(event) {
+	const handleSubmit = event => {
 		event.preventDefault()
 		const {username, password} = event.target.elements
 		onSubmit({
@@ -21,7 +21,7 @@ function Login({onSubmit}) {
 				<input id="password-field" name="password" type="password" />
 			</div>
 			<div>
-				<button className="submit-button" type="submit">
+				<button className="submit-button" type="submit" onSubmit={handleSubmit}>
 					Submit
 				</button>
 			</div>

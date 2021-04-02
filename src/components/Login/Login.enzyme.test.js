@@ -57,7 +57,7 @@ describe('Login Form', () => {
 				},
 			},
 		}
-		button.simulate('click', event)
+		button.simulate('submit', event)
 
 		expect(handleSubmitFn).toHaveBeenCalledTimes(1)
 		expect(handleSubmitFn).toHaveBeenCalledWith({username, password})
