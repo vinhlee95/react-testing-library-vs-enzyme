@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Login from '../Login/Login'
-import Spinner from './Spinner'
+import Spinner from '../UI/Spinner'
 
 function formSubmissionReducer(state, action) {
 	switch (action.type) {
