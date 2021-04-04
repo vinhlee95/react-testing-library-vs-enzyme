@@ -1,3 +1,8 @@
+/**
+ * This module is our own version of React Testing Library
+ * where we essentially export everything it has and override stuffs that we want to customize
+ * e.g a custom render method
+ */
 import * as React from 'react'
 import {render as rtlRender} from '@testing-library/react'
 import {ThemeProvider} from '../theme'
