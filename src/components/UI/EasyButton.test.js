@@ -9,7 +9,7 @@ import EasyButton from './EasyButton'
 test('renders with the light styles for the light theme', () => {
   render(<EasyButton>Easy</EasyButton>)
   const button = screen.getByRole('button', {name: /easy/i})
-  expect(button).toHaveStyle(`
+  expect(button).toHaveStyle(`2
     background-color: white;
     color: black;
   `)
