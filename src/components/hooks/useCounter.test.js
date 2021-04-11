@@ -1,6 +1,8 @@
 import * as React from 'react'
 import {render, screen, act} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { renderHook, act as reactHookAct } from '@testing-library/react-hooks'
+
 import useCounter from './useCounter'
 
 //
@@ -77,4 +79,39 @@ test('useCounter hook allow customization of the initial count and step', () => 
     hookData.increment()
   })
   expect(hookData.count).toEqual(4)
+})
+
+//
+// -----------------------------
+//
+
+//
+// 3️⃣ solution: Using @testing-library/react-hooks
+// https://github.com/testing-library/react-hooks-testing-library
+//
+test('[@testing-library/react-hooks] useCounter hook allow to update the counter', () => {
+  const {result} = renderHook(() => useCounter())
+  // Assert initial state
+  expect(result.current.count).toEqual(0)
+
+  reactHookAct(() => {
+    result.current.increment()
+  })
+  expect(result.current.count).toEqual(1)
+})
+
+test('[@testing-library/react-hooks] useCounter hook allow customization of the initial count and step', () => {
+  const {result, rerender} = renderHook(() => useCounter({initialCount: 2, step: 2}))
+  // Assert initial state
+  expect(result.current.count).toEqual(2)
+  reactHookAct(() => {
+    result.current.increment()
+  })
+  expect(result.current.count).toEqual(4)
+
+  rerender({step: 2})
+  reactHookAct(() => {
+    result.current.decrement()
+  })
+  expect(result.current.count).toEqual(2)
 })
