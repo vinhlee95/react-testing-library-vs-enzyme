@@ -51,10 +51,7 @@ test('exposes the count and increment/decrement functions', () => {
 function setup({...options} = {}) {
   const result = {}
   const TestComponent = () => {
-    // Update the result variable in-place so that its reference (hookData variable in this case)
-    // could access updated state when it changed
-    // since the reference still point to the same object
-    result.current = useCounter({initialCount: 0, step: 1, ...options})
+    Object.assign(result, useCounter({initialCount: 0, step: 1, ...options}))
     return null
   }
   render(<TestComponent />)
@@ -64,20 +61,20 @@ function setup({...options} = {}) {
 test('useCounter hook allow to update the counter', () => {
   const hookData = setup()
   // Assert initial state
-  expect(hookData.current.count).toEqual(0)
+  expect(hookData.count).toEqual(0)
 
   act(() => {
-    hookData.current.increment()
+    hookData.increment()
   })
-  expect(hookData.current.count).toEqual(1)
+  expect(hookData.count).toEqual(1)
 })
 
 test('useCounter hook allow customization of the initial count and step', () => {
   const hookData = setup({initialCount: 2, step: 2})
   // Assert initial state
-  expect(hookData.current.count).toEqual(2)
+  expect(hookData.count).toEqual(2)
   act(() => {
-    hookData.current.increment()
+    hookData.increment()
   })
-  expect(hookData.current.count).toEqual(4)
+  expect(hookData.count).toEqual(4)
 })
